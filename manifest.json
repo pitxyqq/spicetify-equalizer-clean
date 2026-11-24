@@ -1,6 +1,6 @@
 [
   {
-    "name": "Equalizer Clean",
+    "name": "Equalizer",
     "description": "A compact equalizer with simple and advanced controls, bass styles, presets and saved configurations.",
     "preview": "preview.svg",
     "main": "equalizer-clean.js",
