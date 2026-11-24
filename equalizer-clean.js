@@ -17,7 +17,7 @@
   const BASS_MAX_HZ = 250;
   const BASS_DEFAULT = Object.freeze({ on: false, amount: 6, freq: 100, style: "punch" });
   const EXAMPLE_ADV = Object.freeze([4.1, 6.0, -1.0, 0.5, -2.3, -1.0, -2.5, -1.5, -1.0, 4.0]);
-  const EXAMPLE_BASS = Object.freeze({ on: true, amount: 11.0, freq: 250, style: "punch" });
+  const EXAMPLE_BASS = Object.freeze({ on: true, amount: 12.0, freq: 220, style: "punch" });
   const BASS_STYLES = {
     punch: { name: "Punch", shelf: 1.75, w150: 0.48, w: [0, 0, -0.45, -0.03, 0.1, 0] },
     deep: { name: "Deep", shelf: 2, w150: 0.15, w: [0, 0, -0.3, 0, 0.06, 0] },
