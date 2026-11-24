@@ -1,6 +1,6 @@
 // NAME: Equalizer Clean
 // AUTHOR: you
-// VERSION: 1.0.0
+// VERSION: 1.1.0
 // DESCRIPTION: Equalizer with presets, bass controls and saved configurations.
 
 (function spicetifyEqualizer() {
@@ -16,6 +16,8 @@
   const BASS_MIN_HZ = 60;
   const BASS_MAX_HZ = 250;
   const BASS_DEFAULT = Object.freeze({ on: false, amount: 6, freq: 100, style: "punch" });
+  const EXAMPLE_ADV = Object.freeze([4.1, 6.0, -1.0, 0.5, -2.3, -1.0, -2.5, -1.5, -1.0, 4.0]);
+  const EXAMPLE_BASS = Object.freeze({ on: true, amount: 11.0, freq: 250, style: "punch" });
   const BASS_STYLES = {
     punch: { name: "Punch", shelf: 1.75, w150: 0.48, w: [0, 0, -0.45, -0.03, 0.1, 0] },
     deep: { name: "Deep", shelf: 2, w150: 0.15, w: [0, 0, -0.3, 0, 0.06, 0] },
@@ -325,11 +327,13 @@
 
   function loadSavedState() {
     const s = readJSON(STATE_KEY, null);
+    const hasState = !!s && typeof s === "object";
     return {
-      mode: s?.mode === "advanced" ? "advanced" : "simple",
-      bass: s?.bass ? normBass(s.bass) : { ...BASS_DEFAULT },
+      hasState,
+      mode: s?.mode === "advanced" ? "advanced" : hasState ? "simple" : "advanced",
+      bass: s?.bass ? normBass(s.bass) : hasState ? { ...BASS_DEFAULT } : { ...EXAMPLE_BASS },
       gains: validArr(s?.gains, 6) ? s.gains.map(clampDb) : null,
-      adv: validArr(s?.adv, ADV_FREQS.length) ? s.adv.map(clampDb) : null,
+      adv: validArr(s?.adv, ADV_FREQS.length) ? s.adv.map(clampDb) : hasState ? null : EXAMPLE_ADV.slice(),
       advFrom: validArr(s?.advFrom, 6) ? s.advFrom : null,
       effective: validArr(s?.effective, 6) ? s.effective.map(clampDb) : null,
     };
@@ -360,9 +364,9 @@
     const saved = loadSavedState();
     const state = {
       enabled: false,
-      mode: "simple",
-      gains: zeros6.slice(),
-      adv: zeros10.slice(),
+      mode: saved.mode,
+      gains: saved.gains || zeros6.slice(),
+      adv: saved.adv || zeros10.slice(),
       advFrom: null,
       bass: saved.bass,
       userPresets: loadUserPresets(),
@@ -412,6 +416,9 @@
           if (saved.gains) state.gains = saved.gains;
           if (saved.adv) state.adv = saved.adv;
           state.advFrom = saved.advFrom;
+          if (!sameGains(current, nativeGains())) staleGains = current;
+        } else if (!saved.hasState) {
+          // Keep the shareable first-run example and apply it once to Spotify.
           if (!sameGains(current, nativeGains())) staleGains = current;
         } else {
           state.gains = current;
