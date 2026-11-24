@@ -1,6 +1,6 @@
-# Equalizer Clean
+# Equalizer
 
-Equalizer Clean adds a compact equalizer panel to Spicetify.
+Equalizer adds a compact equalizer panel to Spicetify.
 
 Features:
 
